@@ -1,9 +1,6 @@
 <template>
   <div
-    :class="{
-      'item flex items-center hover:shadow focus:shadow-lg m-2 px-4 rounded': true,
-      'hover:shadow-lg': dragging
-    }"
+    class="item flex items-center hover:shadow focus:shadow-lg m-2 px-4 rounded"
     draggable="true"
     @dragstart="onDragStart"
     @dragend="dragging=false"
@@ -13,7 +10,7 @@
       <font-awesome-icon :icon="icon" />
     </div>
     <div class="flex-grow">{{ name }}</div>
-    <button class="btn-primary" v-if="isRemovable">Remove</button>
+    <button @click="$emit('remove', index)" class="btn" v-if="isRemovable">Remove</button>
   </div>
 </template>
 
@@ -21,6 +18,7 @@
 import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
 export default {
   name: 'ChannelItem',
+  emits: ['remove', 'on-drag-start'],
   props: {
     icon: {
       type: Object,
@@ -34,6 +32,14 @@ export default {
       type: Boolean,
       required: false,
       default: true
+    },
+    id: { // todo remove id if need be
+      type: Number,
+      required: true
+    },
+    index: {
+      type: Number,
+      required: true
     }
   },
   computed: {
@@ -47,7 +53,7 @@ export default {
     }
   },
   methods: {
-    onDragStart (event, id) {
+    onDragStart (event) {
       event.dataTransfer.dropEffect = 'move'
       event.dataTransfer.effectAllowed = 'move'
       event.dataTransfer.setData('itemID', this.id)
