@@ -1,16 +1,16 @@
 <template>
   <div id="app" class="container mx-auto px-4">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <channel-manager />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ChannelManager from './components/ChannelManager'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    ChannelManager
   }
 }
 </script>
