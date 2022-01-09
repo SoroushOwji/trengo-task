@@ -1,15 +1,16 @@
 <template>
   <div
-    class="item flex items-center hover:shadow focus:shadow-lg m-2 px-4 rounded"
+    class="item flex items-center hover:shadow px-4 rounded cursor-move"
     draggable="true"
     @dragstart="onDragStart"
     @dragend="dragging=false"
+    @drop="$emit('drop', $event, index)"
   >
-    <font-awesome-icon :icon="gripVertical" class="text-gray-500 font-light"/>
+    <font-awesome-icon :icon="gripVertical" class="text-gray-500 font-light mr-2"/>
     <div class="item__icon bg-gray-100 p-2 border-solid rounded-lg m-2">
       <font-awesome-icon :icon="icon" />
     </div>
-    <div class="flex-grow">{{ name }}</div>
+    <div class="flex-grow font-semibold">{{ name }}</div>
     <button @click="$emit('remove', index)" class="btn" v-if="isRemovable">Remove</button>
   </div>
 </template>
@@ -33,10 +34,6 @@ export default {
       required: false,
       default: true
     },
-    id: { // todo remove id if need be
-      type: Number,
-      required: true
-    },
     index: {
       type: Number,
       required: true
@@ -54,11 +51,7 @@ export default {
   },
   methods: {
     onDragStart (event) {
-      event.dataTransfer.dropEffect = 'move'
-      event.dataTransfer.effectAllowed = 'move'
-      event.dataTransfer.setData('itemID', this.id)
-      this.dragging = true
-      this.$emit('on-drag-start')
+      this.$emit('dragstart', event, this.index)
     }
   }
 }
@@ -66,6 +59,7 @@ export default {
 
 <style scoped lang="scss">
 .item {
+  position: relative;
   &__icon {
     width: 40px;
     height: 40px;

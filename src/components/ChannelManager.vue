@@ -12,22 +12,26 @@
             v-model="newChannel"
           />
         </div>
-        <div v-if="showChannelManagement">
-          <transition-group>
-            <channel-item
-              v-for="(item, index) in list"
-              :key="item.id"
-              :name="item.name"
-              :icon="item.icon"
-              :id="item.id"
-              :index="index"
-              @remove="removeChannel"
-            />
-          </transition-group>
+        <div
+          v-if="showChannelManagement"
+          @dragover.prevent
+          @dragenter.prevent
+          class="channel-manager"
+        >
+          <channel-item
+            v-for="(item, index) in list"
+            :key="item.id"
+            :name="item.name"
+            :icon="item.icon"
+            :index="index"
+            @remove="removeChannel"
+            @drop="dragOver"
+            @dragstart="dragStart"
+          />
         </div>
         <div v-if="changed" class="flex items-center justify-end p-2">
           <button class="btn mr-2" @click="showChannelManagement = false">Cancel</button>
-<!--          fixme this is not right man!-->
+          <!--fixme this is not right man!-->
           <button class="btn btn-primary mr-2" @click="applyChannels">Apply</button>
         </div>
       </div>
@@ -68,7 +72,12 @@ export default {
       return this.iconsList.length
     },
     lastId () {
-      return this.list[this.list.length - 1].id
+      return this.list.reduce((acc, curr) => {
+        if (curr.id > acc) {
+          return curr.id
+        }
+        return acc
+      }, 0)
     },
     changed () {
       return !(JSON.stringify(this.originalList) === JSON.stringify(this.list))
@@ -96,6 +105,17 @@ export default {
     applyChannels () {
       this.originalList = [...this.list]
       this.showChannelManagement = false
+    },
+    dragOver (event, index) {
+      const itemIndex = +event.dataTransfer.getData('index')
+      const item = this.list[itemIndex]
+      this.list.splice(itemIndex, 1)
+      this.list.splice(index, 0, item)
+    },
+    dragStart (event, index) {
+      event.dataTransfer.dropEffect = 'move'
+      event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData('index', index)
     }
   },
   watch: {
@@ -116,5 +136,9 @@ export default {
   &-enter, &-leave-to {
     opacity: 0;
   }
+}
+.channel-manager {
+  max-height: 400px;
+  overflow: auto;
 }
 </style>
