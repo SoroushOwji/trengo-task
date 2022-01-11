@@ -28,7 +28,6 @@ import Button from '@/components/Button'
 export default {
   name: 'ChannelItem',
   components: { Button },
-  emits: ['remove', 'on-drag-start'],
   props: {
     icon: {
       type: Object,
