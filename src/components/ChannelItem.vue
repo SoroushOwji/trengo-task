@@ -1,12 +1,19 @@
 <template>
   <div
-    class="item flex items-center hover:shadow px-4 rounded cursor-move"
-    draggable="true"
+    :class="{
+      'item flex items-center hover:shadow px-4 m-2 bg-white': true,
+      'cursor-move': draggable,
+      'z-10': dragging,
+      'bg-green-200': hovering
+    }"
+    :draggable="draggable"
+    @dragover="hovering = true"
+    @dragleave="onDragLeave"
     @dragstart="onDragStart"
-    @dragend="dragging=false"
-    @drop="$emit('drop', $event, index)"
+    @dragend="onDragEnd"
+    @drop="onDrop"
   >
-    <font-awesome-icon :icon="gripVertical" class="text-gray-500 font-light mr-2"/>
+    <font-awesome-icon v-if="draggable" :icon="gripVertical" class="text-gray-500 font-light mr-2"/>
     <div class="item__icon bg-gray-100 p-2 border-solid rounded-lg m-2">
       <font-awesome-icon :icon="icon" />
     </div>
@@ -37,6 +44,11 @@ export default {
     index: {
       type: Number,
       required: true
+    },
+    draggable: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   computed: {
@@ -44,14 +56,36 @@ export default {
       return faGripVertical
     }
   },
-  data () {
-    return {
-      dragging: false
-    }
-  },
   methods: {
     onDragStart (event) {
+      this.dragging = true
       this.$emit('dragstart', event, this.index)
+    },
+    onDragEnd () {
+      this.dragging = false
+    },
+    onDrop (event) {
+      this.dragging = false
+      this.hovering = false
+      this.$emit('drop', event, this.index)
+    },
+    onDragLeave () {
+      let ref
+
+      const stopThrottle = () => {
+        ref = setTimeout(() => {
+          this.hovering = false
+        }, 300)
+      }
+
+      clearTimeout(ref)
+      stopThrottle()
+    }
+  },
+  data () {
+    return {
+      dragging: false,
+      hovering: false
     }
   }
 }
@@ -66,4 +100,5 @@ export default {
     text-align: center;
   }
 }
+
 </style>

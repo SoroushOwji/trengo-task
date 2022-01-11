@@ -18,19 +18,22 @@
           @dragenter.prevent
           class="channel-manager"
         >
-          <channel-item
-            v-for="(item, index) in list"
-            :key="item.id"
-            :name="item.name"
-            :icon="item.icon"
-            :index="index"
-            @remove="removeChannel"
-            @drop="dragOver"
-            @dragstart="dragStart"
-          />
+          <transition-group name="list">
+            <channel-item
+              v-for="(item, index) in list"
+              :key="item.id"
+              :name="item.name"
+              :icon="item.icon"
+              :index="index"
+              @remove="removeChannel"
+              @drop="dragOver"
+              @dragstart="dragStart"
+              :draggable="true"
+            />
+          </transition-group>
         </div>
         <div v-if="changed" class="flex items-center justify-end p-2">
-          <button class="btn mr-2" @click="showChannelManagement = false">Cancel</button>
+          <button class="btn mr-2" @click="list = [...originalList]">Cancel</button>
           <!--fixme this is not right man!-->
           <button class="btn btn-primary mr-2" @click="applyChannels">Apply</button>
         </div>
@@ -104,7 +107,6 @@ export default {
     },
     applyChannels () {
       this.originalList = [...this.list]
-      this.showChannelManagement = false
     },
     dragOver (event, index) {
       const itemIndex = +event.dataTransfer.getData('index')
@@ -140,5 +142,23 @@ export default {
 .channel-manager {
   max-height: 400px;
   overflow: auto;
+  overflow-x: hidden;
 }
+.list {
+  transition: 1s;
+  &-move {
+    transition: 1s;
+  }
+  &-enter-active {
+    transition: ease-out .5s;
+  }
+  &-leave-active {
+    transition: ease-in .5s;
+  }
+  &-enter, &-leave-to{
+    opacity: 0;
+    transform: translateX(10px);
+  }
+}
+
 </style>
