@@ -18,14 +18,16 @@
       <font-awesome-icon :icon="icon" />
     </div>
     <div class="flex-grow font-semibold">{{ name }}</div>
-    <button @click="$emit('remove', index)" class="btn" v-if="isRemovable">Remove</button>
+    <Button @click="$emit('remove', index)" v-if="isRemovable">Remove</Button>
   </div>
 </template>
 
 <script>
 import { faGripVertical } from '@fortawesome/free-solid-svg-icons'
+import Button from '@/components/Button'
 export default {
   name: 'ChannelItem',
+  components: { Button },
   emits: ['remove', 'on-drag-start'],
   props: {
     icon: {

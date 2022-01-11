@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button class="btn mt-4" @click="showChannelManagement = !showChannelManagement">open channels management</button>
+    <Button class="mt-4" @click="showChannelManagement = !showChannelManagement">open channels management</Button>
     <transition name="fade">
       <div class="rounded-lg border border-gray-200 p-2 mt-4" v-if="showChannelManagement">
         <div class="border-solid rounded-full border border-gray-200 p-2 m-2 flex items-center" >
@@ -33,9 +33,8 @@
           </transition-group>
         </div>
         <div v-if="changed" class="flex items-center justify-end p-2">
-          <button class="btn mr-2" @click="list = [...originalList]">Cancel</button>
-          <!--fixme this is not right man!-->
-          <button class="btn btn-primary mr-2" @click="applyChannels">Apply</button>
+          <Button class="mr-2" @click="list = [...originalList]">Cancel</Button>
+          <Button class="mr-2" color="primary" @click="applyChannels">Apply</Button>
         </div>
       </div>
     </transition>
@@ -46,9 +45,11 @@
 <script>
 import * as icons from '@fortawesome/free-solid-svg-icons'
 import ChannelItem from '@/components/ChannelItem'
+import Button from '@/components/Button'
 
 export default {
   components: {
+    Button,
     ChannelItem
   },
   name: 'ChannelManager',
